@@ -1,9 +1,9 @@
 export const state = () => ({
   people: [],
   selected: null,
-  peopleSelected: [],
+  peopleSelected: null,
+  films: [],
   e: null
-
 })
 
 export const mutations = {
@@ -17,7 +17,17 @@ export const mutations = {
     state.peopleSelected = value
   },
   SET_DATA (state, value) {
-    state.e = value
+    state.selected = value
+  },
+  SET_FILMS (state, value) {
+    state.films.push(value)
+  },
+  REST_FILMS (state) {
+    state.films = []
+  },
+  REMOVE_PEOPLE (state) {
+    const index = state.people.findIndex(p => p.url === state.selected.url)
+    state.people.splice(index, 1)
   }
 }
 
@@ -36,8 +46,15 @@ export const getters = {
 }
 
 export const actions = {
-  async getPeople ({ commit }) {
-    const data = await this.$axios.$get('people')
+  async loadData ({ commit }, selected) {
+    const data = await this.$axios.$get(`people/${selected}`)
     commit('SET_DATA', data)
+    commit('REST_FILMS')
+    if (data.films) {
+      data.films.forEach(async (film) => {
+        const f = await this.$axios.$get(`films/${film}`)
+        commit('SET_FILMS', f)
+      })
+    }
   }
 }

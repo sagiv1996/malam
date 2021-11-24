@@ -1,5 +1,5 @@
 <template lang="pug">
-    v-data-table( :headers='th' :items="pepoleFilter" :server-item-length="pepoleFilter.length" @click:row="handlerClick")
+    v-data-table( :headers='th' :items="pepoleFilter" :server-item-length="pepoleFilter.length")
         template(v-slot:top)
             v-form( ref="form" @submit="filterData")
                 v-row( align="center")
@@ -15,9 +15,16 @@
                                 v-btn( @click="filterData" fab small v-bind="attrs" v-on="on" )
                                     v-icon mdi-account-search
                             span search
-        template(v-slot:item.gender="{ item }")
-            v-avatar( :size="30")
-                v-img( :src="require(`~/static/${item.gender === 'male' ? 'male-avatar' : 'woman-avatar'}.jpg`)")
+        template( v-slot:body="{ items }")
+          tbody
+            tr(v-for="(item, key) in items" @click="handlerClick(item)" :class="item.url === selectedRow ? 'blue-grey' : ''")
+              td {{item.name}}
+              td {{item.height}}
+              td {{item.hair_color}}
+              td {{item.eye_color}}
+              td {{item.birth_year}}
+              td
+                show-custom-avatar( :isMale="item.gender === 'male'" )
 </template>
 <script>
 export default {
@@ -32,6 +39,7 @@ export default {
   },
   data () {
     return {
+      selectedRow: null,
       pepoleFilter: [],
       name: null,
       film: null,
@@ -73,12 +81,12 @@ export default {
     async handlerClick (row) {
       try {
         // alert(JSON.stringify(row))
-        // this.$route.push({ path: '/person-info' })
         // await this.$store.commit('setSelected', row.url)
-        await this.$store.dispatch('getPeople')
-        alert(JSON.stringify(this.$store.state))
-        alert(JSON.stringify(this.$store.state.e))
-        this.$nuxt.$options.router.push({ path: '/abc ' })
+        this.selectedRow = row.url
+        await this.$store.dispatch('loadData', row.url)
+        console.log(this.$store.state)
+        this.$router.push({ path: '/person-info' })
+        // this.$nuxt.$options.router.push({ path: '/person-info ' })
       } catch (error) {
         alert(error)
       }

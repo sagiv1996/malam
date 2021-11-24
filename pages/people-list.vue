@@ -75,7 +75,7 @@ export default {
         // alert(JSON.stringify(row))
         // this.$route.push({ path: '/person-info' })
         // await this.$store.commit('setSelected', row.url)
-        await this.$store.dispatch('getIP')
+        await this.$store.dispatch('getPeople')
         alert(JSON.stringify(this.$store.state))
         alert(JSON.stringify(this.$store.state.e))
         this.$nuxt.$options.router.push({ path: '/abc ' })

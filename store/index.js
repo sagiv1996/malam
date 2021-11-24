@@ -36,7 +36,7 @@ export const getters = {
 }
 
 export const actions = {
-  async getIP ({ commit }) {
+  async getPeople ({ commit }) {
     const data = await this.$axios.$get('people')
     commit('SET_DATA', data)
   }

@@ -3,7 +3,7 @@
     v-card-title( justify="center") {{editOrCreate}} people!
     v-card-text
       v-text-field( label="name" v-model="name" maxlength="50" counter="50" prepend-icon="mdi-alpha-n"  clearable)
-      v-slider( label="height" v-model="height" min="0" max="150" thumb-label="always" :thumb-size="21" prepend-icon="mdi-human-male-height" clearable  )
+      v-slider( label="height" v-model="height" min="0" max="220" thumb-label="always" :thumb-size="21" prepend-icon="mdi-human-male-height" clearable  )
       v-slider( label="mass" v-model="mass" min="0" max="150" thumb-label="always" :thumb-size="21" prepend-icon="mdi-alpha-m" clearable )
       v-text-field( label="skin color" v-model="skin_color" prepend-icon="mdi-face-recognition" clearable )
       v-text-field( label="birth year" v-model="birth_year" prepend-icon="mdi-cake-layered" clearable )

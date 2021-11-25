@@ -28,11 +28,18 @@ export const mutations = {
   REMOVE_PEOPLE (state) {
     const index = state.people.findIndex(p => p.url === state.selected.url)
     state.people.splice(index, 1)
+  },
+  CREATE_PEOPLE (state, people) {
+    state.people.push(people)
+  },
+  EDIT_PEOPLE (state, people) {
+    const index = state.people.findIndex(p => p.url === people.url)
+    state.people[index] = people
   }
 }
 
 export const getters = {
-  getPeople: (state) => (name, film, specie) => {
+  getPeople: state => (name, film, specie) => {
     return state.people.filter((user) => {
       return user.films.includes(film) &&
       (!name || user.name.toString().toLowerCase().startsWith((name).toString().toLowerCase())) &&

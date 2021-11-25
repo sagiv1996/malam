@@ -36,15 +36,19 @@
                 v-list-item-title {{$store.state.selected.gender}}
                 v-list-item-subtitle gender
             v-card-actions
-              v-btn( @click="newPeople = true") new
+              v-dialog
+                  template( v-slot:activator="{ on, attrs }")
+                    v-btn( v-bind="attrs" v-on="on")
+                      v-icon( left) mdi-pencil
+                      span edit
+                  template( v-slot:default="dialog")
+                    people( @closeDialog="dialog.value=false" editOrCreate="update" @updatePeople="[snackbar = true, dialog.value=false]" :NAME="$store.state.selected.name" :HEIGHT="$store.state.selected.height" :MASS="$store.state.selected.mass" :SKIN_COLOR="$store.state.selected.skin_color" :BIRTH_YEAR="$store.state.selected.birth_year" :GENDER="$store.state.selected.gender" :films="$store.state.selected.films" :FILM="$store.state.selected.films" :EYE_COLOR="$store.state.selected.eye_color" :url="$store.state.selected.url" )
               v-spacer
-              v-btn() edit
-              v-spacer
-              v-btn( @click.once="handlerDelete") delete
+              v-btn( @click="handlerDelete")
+                v-icon( left) mdi-delete
+                span delete
       v-col( cols="12")
-        v-data-iterator( :items="$store.state.films" :items-per-page.sync="$store.state.films.length" hide-default-footer :search="search")
-          template( v-slot:header)
-            v-text-field( v-model="search" label="free search..." type="search" :placeholder="placeholder" prepend-icon="mdi-magnify-expand")
+        v-data-iterator( :items="$store.state.films" :items-per-page.sync="$store.state.films.length" hide-default-footer)
           template( v-slot:default="props")
             v-row( justify="center")
               v-col( cols="12" md="6" lg="4"  v-for="(film, index) in $store.state.films")
@@ -89,22 +93,15 @@
                         v-list-item-title {{film.species.length}}
                         v-list-item-subtitle species length
               v-col
-                v-snackbar( :value="modal.open" absolute top color="success" shaped @input="modal.open = false") {{modal.text}}
-                v-dialog( :value="editPeople || newPeople" @click:outside="handlerCloseDialog" :editOrCreate="StringEditOrCreate")
-                  people( @closeDialog="handlerCloseDialog")
+                v-snackbar( v-model="snackbar" absolute top color="success" shaped @input="snackbar = false") successful actions. in the next search the value will be update
 
 </template>
 <script>
 export default {
   data () {
     return {
-      modal: {
-        open: false,
-        text: null
-      },
-      newPeople: false,
-      editPeople: false,
-      search: null
+      snackbar: false,
+      editPeople: false
     }
   },
   middleware ({ redirect, store }) {
@@ -115,17 +112,10 @@ export default {
   methods: {
     handlerDelete () {
       this.$store.commit('REMOVE_PEOPLE')
-      this.modal = { open: true, text: 'Successfully deleted. To see the results, the table in the previous screen must be interpreted!' }
-    },
-    handlerCloseDialog () {
-      this.newPeople = false
-      this.editPeople = false
+      this.snackbar = true
     }
   },
   computed: {
-    StringEditOrCreate () {
-      return this.newPeople ? 'create' : this.editPeople ? 'edit' : null
-    },
     placeholder () {
       return `exmple: ${this.$store.state.films[0] && this.$store.state.films[0].title ? this.$store.state.films[0].title : 'Attack of the Clones'}`
     }

@@ -2,19 +2,28 @@
     v-data-table( :headers='th' :items="pepoleFilter" :server-item-length="pepoleFilter.length")
         template(v-slot:top)
             v-form( ref="form" @submit.prevent="filterData" )
-                v-row( align="center" class="mx-3")
-                    v-col( cols="5")
-                        v-text-field( label="name" v-model="name" maxlength="50" clearable :counter="50" @keyup.enter="filterData" placeholder="exmple: luk" solo)
+                v-row( align="baseline" class="mx-3")
                     v-col( cols="3")
-                        v-autocomplete( label="Films" v-model="film" :items="films" item-text="title" :rules="[v => !!v || 'name is required']" required item-value="episode_id" clearable @keyup.enter="filterData" solo)
+                        v-text-field( label="name" v-model="name" maxlength="50" clearable :counter="50" @keyup.enter="filterData" placeholder="exmple: luk" solo)
+                    v-col( cols="4")
+                        v-autocomplete( label="Films" v-model="film" :items="films" item-text="title" :rules="[v => !!v || 'film is required']" required item-value="episode_id" clearable @keyup.enter="filterData" solo)
                     v-col( cols="3")
                         v-autocomplete( label="Species" v-model="specie" :items="speciesFilter" item-text="homeworld" item-value="title" clearable :disabled="speciesFilter.length<1" @keyup.enter="filterData" solo )
                     v-col(cols="1")
                         v-tooltip( top)
                             template(v-slot:activator="{ on, attrs } ")
-                                v-btn( @click="filterData" fab small v-bind="attrs" v-on="on" type="submit"  )
+                                v-btn( @click="filterData" fab small v-bind="attrs" v-on="on" type="submit")
                                     v-icon mdi-account-search
                             span search
+                    v-col( cols="1")
+                      v-dialog
+                        template( v-slot:activator="{ on, attrs }")
+                          v-btn(small v-bind="attrs" v-on="on")
+                            v-icon mdi-plus
+                            span new
+                        template( v-slot:default="dialog")
+                          people( @closeDialog="dialog.value=false" editOrCreate="create" :films="films" @addPeople="[snackbar = true, dialog.value=false]" :url="new Date().getTime()")
+                      v-snackbar( :value="snackbar" absolute top color="success" shaped @input="snackbar = false") the transaction completed successfully :)
         template( v-slot:body="{ items }")
           tbody
             tr(v-for="(item, key) in items" @click="handlerClick(item)" :class="item.url === selectedRow ? 'blue-grey' : ''")
@@ -39,6 +48,7 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
       selectedRow: null,
       pepoleFilter: [],
       name: null,
@@ -88,7 +98,7 @@ export default {
         this.$router.push({ path: '/person-info' })
         // this.$nuxt.$options.router.push({ path: '/person-info ' })
       } catch (error) {
-        alert(error)
+        alert('data didnt found. change your filter')
       }
     }
   },

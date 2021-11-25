@@ -12,8 +12,8 @@
                 v-list-item-title {{$store.state.selected.height}}
                 v-list-item-subtitle height
             v-list-item
-              v-list-item-avatar
-                v-avatar M
+              v-list-item-icon
+                v-icon mdi-alpha-m
               v-list-item-content
                 v-list-item-title {{$store.state.selected.mass}}
                 v-list-item-subtitle mass
@@ -42,7 +42,9 @@
               v-spacer
               v-btn( @click.once="handlerDelete") delete
       v-col( cols="12")
-        v-data-iterator( :items="$store.state.films" :items-per-page.sync="$store.state.films.length" hide-default-footer)
+        v-data-iterator( :items="$store.state.films" :items-per-page.sync="$store.state.films.length" hide-default-footer :search="search")
+          template( v-slot:header)
+            v-text-field( v-model="search" label="free search..." type="search" :placeholder="placeholder" prepend-icon="mdi-magnify-expand")
           template( v-slot:default="props")
             v-row( justify="center")
               v-col( cols="12" md="6" lg="4"  v-for="(film, index) in $store.state.films")
@@ -88,8 +90,8 @@
                         v-list-item-subtitle species length
               v-col
                 v-snackbar( :value="modal.open" absolute top color="success" shaped @input="modal.open = false") {{modal.text}}
-                v-dialog( :value="editPeople || newPeople" @click:outside="[newPeople = false, editPeople = false]" widh="700px")
-                  people
+                v-dialog( :value="editPeople || newPeople" @click:outside="handlerCloseDialog" :editOrCreate="StringEditOrCreate")
+                  people( @closeDialog="handlerCloseDialog")
 
 </template>
 <script>
@@ -101,7 +103,8 @@ export default {
         text: null
       },
       newPeople: false,
-      editPeople: false
+      editPeople: false,
+      search: null
     }
   },
   middleware ({ redirect, store }) {
@@ -113,6 +116,18 @@ export default {
     handlerDelete () {
       this.$store.commit('REMOVE_PEOPLE')
       this.modal = { open: true, text: 'Successfully deleted. To see the results, the table in the previous screen must be interpreted!' }
+    },
+    handlerCloseDialog () {
+      this.newPeople = false
+      this.editPeople = false
+    }
+  },
+  computed: {
+    StringEditOrCreate () {
+      return this.newPeople ? 'create' : this.editPeople ? 'edit' : null
+    },
+    placeholder () {
+      return `exmple: ${this.$store.state.films[0] && this.$store.state.films[0].title ? this.$store.state.films[0].title : 'Attack of the Clones'}`
     }
   }
 }

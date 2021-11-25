@@ -40,7 +40,7 @@ export default {
   async asyncData ({ $axios, store }) {
     if (store.state.people.length === 0) {
       const people = await $axios.$get('people')
-      store.commit('setPeople', people)
+      store.commit('SET_PEOPLE', people)
       const films = await $axios.$get('films')
       const species = await $axios.$get('species')
       return { films, species }
@@ -90,13 +90,10 @@ export default {
     },
     async handlerClick (row) {
       try {
-        // alert(JSON.stringify(row))
-        // await this.$store.commit('setSelected', row.url)
         this.selectedRow = row.url
         await this.$store.dispatch('loadData', row.url)
         console.log(this.$store.state)
         this.$router.push({ path: '/person-info' })
-        // this.$nuxt.$options.router.push({ path: '/person-info ' })
       } catch (error) {
         alert('data didnt found. change your filter')
       }

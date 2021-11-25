@@ -1,20 +1,12 @@
 export const state = () => ({
   people: [],
   selected: null,
-  peopleSelected: null,
-  films: [],
-  e: null
+  films: []
 })
 
 export const mutations = {
-  setPeople (state, values) {
+  SET_PEOPLE (state, values) {
     state.people = values
-  },
-  setSelected (state, id) {
-    state.selected = id
-  },
-  setPeopleSingle (state, value) {
-    state.peopleSelected = value
   },
   SET_DATA (state, value) {
     state.selected = value

@@ -37,10 +37,6 @@ export const getters = {
       (!name || user.name.toString().toLowerCase().startsWith((name).toString().toLowerCase())) &&
       (!specie || user.species.includes(specie))
     })
-  },
-
-  getSelected: (state) => {
-    return state.selected
   }
 }
 
